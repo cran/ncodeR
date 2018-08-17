@@ -45,7 +45,7 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
           cli::rule(width = 30),
           paste0("kappa: ", sprintf("%.2f",round(stats$results$testSet$kappa,2))),
           # paste0("\U03C1: ",   sprintf("%.2f",round(stats$results$testSet$rho,2)))
-          paste0("rhow: ",   sprintf("%.2f",round(stats$results$testSet$rho,2)))
+          paste0("rho: ",   sprintf("%.2f",round(stats$results$testSet$rho,2)))
         )
       ));
       
@@ -103,9 +103,11 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
           expr = ifelse(grepl(pattern="^[[:alnum:]]*$", x=expr, perl=T), paste0("\\b",expr), expr)
           grepl(pattern = expr, x = as.character(excerpts[index]), perl=T, ignore.case=T)
         }))]
+        diffKappa = codeClone$kappa()
         print(cli::boxx(
           c(
             paste0("Difference #",i),
+            paste0("Training Kappa: ", sprintf("%.2f",round(diffKappa,2))),
             cli::rule(width = 50),
             strwrap(as.character(excerpts[index])), "", 
             paste0("Self: ", diffData[i,2]),
@@ -116,7 +118,6 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
         ));
         
         uin = whichOption()
-        diffKappa = codeClone$kappa()
         if(uin == "1") {
           codeClone$trainingSet[codeClone$trainingSet[,"ID"]==index,2] = (!as.logical(diffData[i,2])) * 1
         } else if(uin == "2" || uin == "3") {
@@ -127,7 +128,7 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
             }else{
               codeClone.new = removeExpression(codeClone, index)
             }
-            codeClone.new = autocode(codeClone.new, simplify = F)
+            codeClone.new = autocode(codeClone.new, simplify = F, mode = "training")
             newKappa = codeClone.new$kappa()
             percChange = newKappa - diffKappa
             cat(paste0(
@@ -162,7 +163,6 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
     
     code.to.use$trainingSet = rbind(code.to.use$trainingSet, code.to.use$testSet)
     code.to.use$testSet = code.to.use$testSet[-c(1:nrow(code.to.use$testSet)),]
-    # trainingSet = code.to.use$trainingSet
   }
   
   diffs = differences(code.to.use)

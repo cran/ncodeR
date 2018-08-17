@@ -5,7 +5,7 @@
 \title{Match a list of expressions against some set of excerpts}
 \usage{
 autocode(code = NULL, expressions = NULL, excerpts = NULL,
-  codeSet = NULL, simplify = T)
+  codeSet = NULL, simplify = T, mode = "all")
 }
 \arguments{
 \item{code}{Code to autocode}
@@ -17,6 +17,8 @@ autocode(code = NULL, expressions = NULL, excerpts = NULL,
 \item{codeSet}{Codeset to code, required if code == NULL}
 
 \item{simplify}{If TRUE, returns a data.frame, else returns a Code or CodeSet object}
+
+\item{mode}{Either all, training, or test representing the set of excerpts that should be recoded in the computerSet}
 }
 \value{
 data.frame of is simplify = T (default), otherwise the Code or CodeSet object with updated computerSets

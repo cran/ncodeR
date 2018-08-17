@@ -10,6 +10,8 @@ CodeSet
 }
 \value{
 CodeSet object
+
+CodeSet
 }
 \description{
 Object representing a set of codes

@@ -6,6 +6,7 @@
 #'
 #' @return logical vector representing indices that are coded differently
 #' @export 
+#' @return vector of indices representing differences
 differences <- function(code = NULL) { #, data = NULL, col1 = NULL, col2 = NULL, cols = NULL) {
   # if(!is.null(code)) {
   ids = code$trainingSet[,"ID"]

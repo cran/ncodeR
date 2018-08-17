@@ -18,37 +18,12 @@ handcode(code = NULL, excerpts = NULL, expressions = NULL, n = 10,
 
 \item{baserate}{Value between 0 and 1, inflates the baserate chosen excerpts to code, ensuring the number of positive at least equal to n * baserate}
 }
+\value{
+Code
+}
 \description{
 Handcode a set of excerpts using a vector of expressions
 }
 \details{
-#' Start validation of a code
-#' @description Validate a code by asking the user for input
-#' @import cli
-#' @export
-validate = function(code, numExcerpts = 10, baserate = 0.2, exclude = c(), auto.update = T) {
-  if(!is(code, "Code")){  
-    stop("code must be an instance of class 'Code' or one of its subclasses");
-  }
-  if(numExcerpts < 1 || class(numExcerpts) != "numeric") {
-    stop("numExcerpts must be a positive integer");
-  }
-  if(baserate < 0 || baserate > 1) {
-    stop("baserate must be a positive real number between one and zero (inclusive)");
-  }
-  
-  uncodedInSet = !(1:length(code$computerSet) %in% which(code$resultsSet$ID > 0))
-  indices = rhoR:::getHandSetIndices(code$computerSet[uncodedInSet], handSetLength = numExcerpts, handSetBaserate = baserate)
-  
-  newTest = matrix(NA, ncol=3)
-  selfCodes = handcode(code$codeSet$excerpts[indices])
-  newTest = matrix(c(indices,selfCodes,code$computerSet[indices,c(code$name)]), dimnames=list(NULL,c("ID","self","computer")), ncol=3)
-  
-  if(auto.update == T) {
-    code$resultsSet = rbind(code$resultsSet,matrix(c(indices, selfCodes, rep(NA,length(selfCodes))), ncol=3, dimnames=list(NULL,dimnames(code$resultsSet)[[2]])))
-    return(code$testSet());
-  } else {
-    return(newTest);
-  }
-}
+Handcode a set of excerpts using a vector of expressions
 }

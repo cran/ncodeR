@@ -13,6 +13,7 @@
 #'
 #' @return CodeSet object
 #' @export
+###
 code.set <- function(title = "", description = "", excerpts = c(), codes = c()) {
   CodeSet$new(title, description, excerpts, codes);
 }
@@ -32,6 +33,8 @@ code.set <- function(title = "", description = "", excerpts = c(), codes = c()) 
 #' 
 #' @return CodeSet object
 #' @export
+#' @return CodeSet
+###
 CodeSet = R6::R6Class("CodeSet",
   public = list(
     call = NULL,

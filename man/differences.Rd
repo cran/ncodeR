@@ -11,6 +11,8 @@ differences(code = NULL)
 }
 \value{
 logical vector representing indices that are coded differently
+
+vector of indices representing differences
 }
 \description{
 Find rows that differ within a data.frame or two vectors

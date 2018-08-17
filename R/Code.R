@@ -75,7 +75,7 @@ Code = R6::R6Class("Code",
         stop("name must be a string");
       }
       if(class(definition) != "character"){
-        stop("conceptual definition must be a string");
+        stop("Conceptual definition must be a string");
       }
       if(!is.null(excerpts)) {
         self$excerpts = excerpts;
@@ -84,12 +84,8 @@ Code = R6::R6Class("Code",
         # codeSet$codes = c(codeSet$codes, self)
         if(!is.null(codeSet$excerpts)) {
           self$excerpts = codeSet$excerpts
-        } else {
-          stop("The codeSet provided doesn't have any excerpts.");
-        }
-      } else {
-        stop("No excerpts found. Use the `excerpts` or `codeSet` params");
-      }
+        } 
+      } 
                       
       args = list(...);
       
@@ -101,11 +97,11 @@ Code = R6::R6Class("Code",
 
       if(is.null(testSet)) {
         self$testSet = matrix(ncol = 2, nrow = 0);
-        colnames(self$testSet) = c("ID", "1");
+        colnames(self$testSet) = c("ID", "X1");
       }
       if(is.null(trainingSet)) {
         self$trainingSet = matrix(ncol = 2, nrow = 0);
-        colnames(self$trainingSet) = c("ID", "1");
+        colnames(self$trainingSet) = c("ID", "X1");
       }
       if(is.null(computerSet)) {
         self$computerSet = rep(NA, length(codeSet$excerpts));

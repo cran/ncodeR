@@ -9,12 +9,11 @@
 test <- function(code, kappaThreshold=0.65) {
   if(is.null(code) || !is(object=code, class=c("Code")))
     stop("Supplied `code` must be an instance of `Code`")
-  
   code.to.use = code$clone(deep=T);
   
   getSet <- function(wh = "test") {
     to.test.set = code.to.use[[paste0(wh,"Set")]];
-    to.test = cbind(to.test.set, code.to.use$computerSet[to.test.set[,1]])
+    matrix(c(code.to.use$computerSet[to.test.set[,1]], to.test.set[,2]), ncol=2)
   }
   to.test = getSet("test")
   to.train = getSet("training")
@@ -25,12 +24,14 @@ test <- function(code, kappaThreshold=0.65) {
   testN = nrow(to.test)
   trainN = nrow(to.train)
   if(testN>0) {
-    testRho$rho = tryCatch(rhoR::rhoSet(to.test[,2:3], ScSKappaThreshold = kappaThreshold), error = function(x) NA);
-    testRho$kappa = rhoR::kappaSet(to.test[,2:3])
+    testRho = tryCatch(rhoR::rhoSet(to.test, ScSKappaThreshold = kappaThreshold), error = function(x) {
+     list(rho = NA, kappa = rhoR::kappaSet(to.test))
+    });
   }
   if(trainN>0) {
-    trainKappa$kappa = rhoR::kappaSet(to.train[,2:3])
+    trainKappa$kappa = rhoR::kappaSet(to.train)
   }
+  
   testRho$N = testN
   trainKappa$N = trainN
   
