@@ -18,13 +18,18 @@
 #' @export
 as.data.frame.CodeSet <- function(x, row.names = NULL, optional = FALSE, ...) {
   codes = x$codes
-  len = length(x$excerpts)
+  len = 0;
+  if(is.null(x$excerpts)) {
+    excerpts = x$codes[[1]]$excerpts;
+  } else{
+    excerpts = x$excerpts
+  }
+  len = length(excerpts)
   args = list(...)
-  if(is.null(args$len)) len = args$len;
-  if(is.null(args$codes)) codes = args$codes;
-    
+  if(is.null(len) && !is.null(args$len)) len = args$len;
+  if(is.null(args$codes)) codes = x$codes;
   if(!is.null(len) && len > 0) {
-    data.frame(ID = 1:len, excerpt = x$excerpts[1:len], sapply(codes, function(x){ 
+    data.frame(ID = 1:len, excerpt = excerpts[1:len], sapply(codes, function(x){ 
       df = data.frame( x$computerSet[1:len] ) 
       colnames(df) = c( x[['name']] )
       df

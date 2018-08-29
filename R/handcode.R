@@ -44,7 +44,7 @@ handcode = function(
     stop("No excerpts found. Either add excerpts to the code$codeSet or use the excerpts parameter")
   }
   
-  code.to.use = autocode(code = code.to.use, expressions = code.to.use$expressions, excerpts = code.to.use$excerpts, simplify=F)
+  code.to.use = autocode(x = code.to.use, expressions = code.to.use$expressions, excerpts = code.to.use$excerpts, simplify=F)
   
   # uncodedInSet = !(1:length(code$computerSet) %in% which(code$resultsSet$ID > 0))
   # indices = rhoR:::getHandSetIndices(code$computerSet[uncodedInSet], handSetLength = numExcerpts, handSetBaserate = baserate)

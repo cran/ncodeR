@@ -128,7 +128,7 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
             }else{
               codeClone.new = removeExpression(codeClone, index)
             }
-            codeClone.new = autocode(codeClone.new, simplify = F, mode = "training")
+            codeClone.new = autocode(x = codeClone.new, simplify = F, mode = "training")
             newKappa = codeClone.new$kappa()
             percChange = newKappa - diffKappa
             cat(paste0(

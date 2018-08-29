@@ -2,22 +2,33 @@
 #'
 #' @description Autocodes all codes provided, either directly with code or as part of a provided codeset
 #' 
-#' @param code Code to autocode
+#' @param x Object to autocode. Either a Code or CodeSet
 #' @param expressions Expressions to use for coding (optional)
 #' @param excerpts Excerpts to code
-#' @param codeSet Codeset to code, required if code == NULL
 #' @param simplify If TRUE, returns a data.frame, else returns a Code or CodeSet object 
 #' @param mode Either all, training, or test representing the set of excerpts that should be recoded in the computerSet
 #'
 #' @return data.frame of is simplify = T (default), otherwise the Code or CodeSet object with updated computerSets
 #' 
 #' @export
-autocode <- function(code = NULL, expressions = NULL, excerpts = NULL, codeSet = NULL, simplify = T, mode = "all") {
+autocode <- function(x = NULL, expressions = NULL, excerpts = NULL, simplify = T, mode = "all") {
   modes = c("all", "training", "test")
   to.code = NULL;
   code.to.use = NULL;
   codeSet.to.use = NULL;
   mode = match.arg(mode, modes);
+  
+  
+  codeSet = NULL
+  code = NULL
+  if(inherits(x, "CodeSet")) {
+    codeSet = x
+  } else if(inherits(x, "Code")) {
+    code = x
+  } else {
+    stop("Value supplied as `x` must be an instance of Code or CodeSet")
+  }
+  
   if(!is.null(codeSet)) {
     codeSet.to.use = codeSet$clone(deep = T);
     to.code = sapply(codeSet.to.use$codes, function(cc) { cc$clone(deep = T); cc$codeSet = codeSet.to.use; cc });
@@ -53,13 +64,14 @@ autocode <- function(code = NULL, expressions = NULL, excerpts = NULL, codeSet =
     len = 0
     if (is.null(excerpts)) {
       if(!is.null(code.to.use) && length(code.to.use$excerpts) > 0) {
-        if (mode == "training") {
-          excerpts = code.to.use$excerpts[code.to.use$trainingSet[,1]]
-        } else {
-          excerpts = codeSet.to.use$excerpts;
-        }
+          excerpts = code.to.use$excerpts
+      } else {
+          excerpts = codeSet.to.use$codes[[1]]$excerpts;
       }
     } 
+    if (mode == "training") {
+      excerpts = excerpts[code.to.use$trainingSet[,1]]  
+    }
     len = length(excerpts);
     
     if(len < 1) {
@@ -83,7 +95,6 @@ autocode <- function(code = NULL, expressions = NULL, excerpts = NULL, codeSet =
     }
   } else if(!is.null(codeSet)) {
     if(simplify == T) {
-      browser()
       as.data.frame.CodeSet(codeSet.to.use)
     } else {
       codeSet.to.use$codes = to.code;

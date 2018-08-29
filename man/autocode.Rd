@@ -4,17 +4,15 @@
 \alias{autocode}
 \title{Match a list of expressions against some set of excerpts}
 \usage{
-autocode(code = NULL, expressions = NULL, excerpts = NULL,
-  codeSet = NULL, simplify = T, mode = "all")
+autocode(x = NULL, expressions = NULL, excerpts = NULL, simplify = T,
+  mode = "all")
 }
 \arguments{
-\item{code}{Code to autocode}
+\item{x}{Object to autocode. Either a Code or CodeSet}
 
 \item{expressions}{Expressions to use for coding (optional)}
 
 \item{excerpts}{Excerpts to code}
-
-\item{codeSet}{Codeset to code, required if code == NULL}
 
 \item{simplify}{If TRUE, returns a data.frame, else returns a Code or CodeSet object}
 
