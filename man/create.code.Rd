@@ -4,7 +4,7 @@
 \alias{create.code}
 \title{Create a code}
 \usage{
-create.code(name = "NewCode", definition = "", excerpts = NULL,
+create.code(name = "NewCode", definition = NULL, excerpts = NULL,
   type = "Regex", ...)
 }
 \arguments{
@@ -16,7 +16,7 @@ create.code(name = "NewCode", definition = "", excerpts = NULL,
 
 \item{type}{Character string representing the type of code (Default: "Regex")}
 
-\item{...}{Adiditional parameters}
+\item{...}{Additional parameters}
 }
 \value{
 Code object

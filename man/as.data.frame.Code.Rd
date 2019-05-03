@@ -4,7 +4,8 @@
 \alias{as.data.frame.Code}
 \title{Title}
 \usage{
-\method{as.data.frame}{Code}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{Code}(x, row.names = NULL, optional = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{Code object to convert}

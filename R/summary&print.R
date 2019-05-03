@@ -3,6 +3,9 @@ bold <- function(txt){
   txt
 }
 float <- function(n, p=2) {
+  if(is.character(n))
+    n = type.convert(n)
+  
   sprintf(paste0("%.",p,"f"), round(if(!is.null(n)) n else 0, p))
 }
 
@@ -63,6 +66,56 @@ print.summary.CodeSet = function(x, ...){
   })
   
 }
+#' Obtain a summary of a Code's test results
+#'
+#' @param object TestList object of Code
+#' @param ... Additional parameters
+#'
+#' @examples
+#' data(RS.data)
+#' rs = RS.data
+#' newcode = create.code(name = "Data", 
+#'     expressions = c("number","data"), excerpts = rs$text)
+#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
+#' newcode = test(code = newcode, kappaThreshold = 0.65)
+#' summary(newcode$statistics)
+#' @return list of Test summary
+#' @export
+summary.TestList = function(object, ...) {
+  args = list(...)
+  
+  
+  which.tests = c("test","training")
+  if(!is.null(args$which.tests)) {
+    which.tests = args$which.tests
+  }
+  
+  summaries = sapply(which.tests, function(t) {
+    res = object[[paste0(t,"Set")]]
+    if(!is.null(res) && length(res) > 0) {
+      summary(res[[length(res)]], which.test = t)
+    }
+  })
+  summaries
+}
+#' Print a TestList summary
+#'
+#' @param x list from summary()
+#' @param ... Additional parameters
+#' 
+#' @examples
+#' data(RS.data)
+#' rs = RS.data
+#' newcode = create.code( name = "Data", 
+#'     expressions = c("number","data"), excerpts = rs$text)
+#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
+#' newcode = test(code = newcode, kappaThreshold = 0.65)
+#' summary(newcode$statistics)
+#' @return prints summary
+#' @export
+print.summary.TestList = function(x, ...) {
+  browser()
+}
 
 #' Obtain a summary of a Code's test results
 #'
@@ -80,20 +133,21 @@ print.summary.CodeSet = function(x, ...){
 #' @return list of Test summary
 #' @export
 summary.Test = function(object, ...) {
+  # browser()
   args = list(...)
   
-  which.test = c("test","training");
-  if(!is.null(which.test)) which.test = args$which.test;
+  which.test = "test"
+  if(!is.null(args$which.test)) which.test = args$which.test;
   
-  if(!all(which.test %in% c("test","training"))) 
-    stop("which.test may only contain 'test' and/or 'training'")
   this.summary = c(
-    object$testSet$kappa, 
-    object$testSet$rho, 
-    object$testSet$N, 
-    object$trainingSet$kappa, 
-    object$trainingSet$N
+    which = which.test,
+    kappa = object$kappa, 
+    N = object$N
   )
+  
+  if(which.test == "test") {
+    this.summary = c(this.summary, rho = object$rho)
+  }
   
   class(this.summary) = "summary.Test"
   this.summary
@@ -118,14 +172,22 @@ print.summary.Test = function(x, ...) {
   args = list(...)
   width = 40;
   if(!is.null(args$width)) width = args$width
+  
+  header = NULL
+  vals = NULL
+  if(x[1] == "test") {
+    header = "kappa\t| rho\t| N"
+    vals = paste0(float(x[2]),"\t| ",float(x[4]),"\t| ",x[3])
+  }
+  else if(x[1] == "training" || x[1] == "secondRater") {
+    header = "kappa\t| N"
+    vals = paste0(float(x[2]),"\t| ",x[3])
+  }
   writeLines(c(
     paste0(rep("-",width), collapse=""),
-    paste0(bold("Test Set"),"\t\t| ",bold("Training Set")),
+    header,
     paste0(rep("-",width), collapse=""),
-    # "kappa\t| \U03C1\t| N\t| kappa\t| N",
-    "kappa\t| rho\t| N\t| kappa\t| N",
-    paste0(rep("-",width), collapse=""),
-    paste0(float(x[1]),"\t| ",float(x[2]),"\t| ",x[3],"\t| ", float(x[4]),"\t| ",x[5]),
+    vals,
     paste0(rep("-",width), collapse=""),
     ""
   ))
@@ -147,6 +209,7 @@ print.summary.Test = function(x, ...) {
 #' @export
 summary.Code = function( object, ... ) {
   statsSummary = summary(object$statistics)
+  
   this.summary = list(
     object$name,
     object$codeSet$title,

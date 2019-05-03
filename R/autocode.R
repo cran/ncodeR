@@ -18,6 +18,7 @@ autocode <- function(x = NULL, expressions = NULL, excerpts = NULL, simplify = T
   codeSet.to.use = NULL;
   mode = match.arg(mode, modes);
   
+  # browser()
   
   codeSet = NULL
   code = NULL

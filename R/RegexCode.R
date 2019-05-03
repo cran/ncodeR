@@ -47,15 +47,7 @@ RegexCode = R6::R6Class("RegexCode",
     },
     
     process = function(excerpts = self$excerpts) {
-      matrix(
-        unlist(lapply(excerpts, function(x) {
-          any(sapply(self$expressions, function(c) {
-            grepl(pattern = c, x = x, perl=T, ignore.case=T)
-          }))
-        })),
-        ncol=1,
-        dimnames = list(NULL, self$name),byrow=T
-      ) * 1;
+      expression.match(excerpts, self$expressions, names = list(NULL, self$name))
     },
                      
     ###
@@ -99,3 +91,16 @@ RegexCode = R6::R6Class("RegexCode",
   private = list()
   
 )
+
+expression.match <- function(excerpts, expressions, names = list(NULL, "V1")) {
+  matrix(
+    unlist(lapply(excerpts, function(x) {
+      any(sapply(expressions, function(c) {
+        grepl(pattern = c, x = x, perl=T, ignore.case=T)
+      }))
+    })),
+    ncol=1,
+    dimnames = names, 
+    byrow=T
+  ) * 1
+}

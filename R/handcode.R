@@ -7,6 +7,7 @@
 #' @param expressions Expressions to code with (options)
 #' @param n Number of excerpts to handcode
 #' @param baserate Value between 0 and 1, inflates the baserate chosen excerpts to code, ensuring the number of positive at least equal to n * baserate 
+#' @param unseen Logical or number Indicating additional excerpts with unseen words should be added. If TRUE (default), two words added or by `number`
 #'
 #' @import cli
 #' @export
@@ -16,7 +17,8 @@ handcode = function(
   excerpts = NULL, 
   expressions = NULL, 
   n = 10, 
-  baserate = 0.2
+  baserate = 0.2,
+  unseen = F
 ) {
   code.to.use = NULL;
   if(!is.null(code)) {
@@ -43,12 +45,22 @@ handcode = function(
   if(len < 1) {
     stop("No excerpts found. Either add excerpts to the code$codeSet or use the excerpts parameter")
   }
+  if(code.to.use$getValue("testedTestSet") == T) {
+    cat("This TestSet has already been tested, continuing will move your current Test into Training.")
+    uin = readline("Continue in creating a new TestSet? (Yes/no [default: no]): ");
+    if(grepl(x=tolower(uin),pattern="^y",perl=T)) {
+      code.to.use$clearTestSet()
+    } else {
+      return(code.to.use)
+    }
+  }
   
   code.to.use = autocode(x = code.to.use, expressions = code.to.use$expressions, excerpts = code.to.use$excerpts, simplify=F)
   
   # uncodedInSet = !(1:length(code$computerSet) %in% which(code$resultsSet$ID > 0))
   # indices = rhoR:::getHandSetIndices(code$computerSet[uncodedInSet], handSetLength = numExcerpts, handSetBaserate = baserate)
-  indices = getHandSetIndices(code.to.use$computerSet, handSetLength = n, handSetBaserate = baserate)
+  
+  indices = getHandSetIndices(code.to.use, handSetLength = n, handSetBaserate = baserate, unseen = unseen)
   
   # selfCodes = c()
   # for(i in 1:length(excerpts)) {

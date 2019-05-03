@@ -32,20 +32,23 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   }
   
   
-  resolveFirst <- function(code.to.use) {
-    cat("There are untested results in the test set. If you continue with resolving, those results will be added to the training set\n")
+  resolveFirst <- function() {
+    cat("The TestSet hasn't been tested. If you continue, those results will be added to the TrainingSet.\n\n")
     cat("Would you like to: \n")
-    cat("1.) Run a test first\n")
-    cat("2.) Continue to resolve\n")
+    cat("\t1.) Run a test first\n")
+    cat("\t2.) Continue to resolve\n")
+    cat("\t3.) Cancel [default]\n")
     
-    if(readline("Enter 1 or 2: ") == "1") {
-      stats = test(code.to.use)
+    uin = readline("Enter 1, 2, or 3: ")
+    if(uin == "1") {
+      code.to.use <<- test(code = code.to.use)
+      teststats = code.to.use$statistics$testSet
       print(cli::boxx(
         c("Test Set Statistics",
           cli::rule(width = 30),
-          paste0("kappa: ", sprintf("%.2f",round(stats$results$testSet$kappa,2))),
+          paste0("kappa: ", sprintf("%.2f",round(teststats[[length(teststats)]]$kappa,2))),
           # paste0("\U03C1: ",   sprintf("%.2f",round(stats$results$testSet$rho,2)))
-          paste0("rho: ",   sprintf("%.2f",round(stats$results$testSet$rho,2)))
+          paste0("rho: ",   sprintf("%.2f",round(teststats[[length(teststats)]]$rho,2)))
         )
       ));
       
@@ -53,11 +56,11 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
       cat("1.) Proceed to resolve\n");
       cat("2.) Quit\n");
       return(readline("Enter 1 or 2: ") == "1")
-    } else {
+    } else if (uin == "2") {
       return(T)
+    } else {
+      return(F)
     }
-    
-    return(F)
   }
   whichOption <- function() {
     cat("1. Change my code\n2. Add word to expression list\n3. Remove word form expression list\n4. Ignore difference\n")
@@ -154,15 +157,14 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   if(!is.null(trainingSet)) {
     code.to.use$trainingSet = trainingSet;
   } else {
-    if(nrow(code.to.use$testSet) && is.null(code.to.use$statistics)) {
-      justResolve = resolveFirst(code.to.use)
+    if(nrow(code.to.use$testSet) && code.to.use$getValue("testedTestSet") == F) {
+      justResolve = resolveFirst()
       if(justResolve != T) {
-        return("Quitter")
+        return(code.to.use)
       }
     }
     
-    code.to.use$trainingSet = rbind(code.to.use$trainingSet, code.to.use$testSet)
-    code.to.use$testSet = code.to.use$testSet[-c(1:nrow(code.to.use$testSet)),]
+    code.to.use$clearTestSet()
   }
   
   diffs = differences(code.to.use)
@@ -173,7 +175,7 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
     origKappa = code.to.use$kappa();
     code.to.use = loopThem(code.to.use);
     code.to.use = test(code.to.use)
-    cat("New training kappa: ", float(code.to.use$statistics$trainingSet$kappa), "\n") #rhoR::kappa(trainingSet[,-c(1)]), "\n")
+    cat("New training kappa: ", float(code.to.use$kappa(which = "training")), "\n") #rhoR::kappa(trainingSet[,-c(1)]), "\n")
     diffs = differences(code.to.use)
     if(length(diffs) > 0) {
       cat("There are still", length(diffs), "difference(s).")
@@ -188,12 +190,18 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   cat("There are no more differences.\n")
   
   code.to.use = test(code.to.use)
-  newKappa = code.to.use$kappa()
-  percChange = newKappa - origKappa
+  newKappa = code.to.use$kappa(which = "training")
+  percChangeText = NULL
+  if(!is.na(origKappa)) {
+    percChange = newKappa - origKappa
+    percChangeText = paste0(" (", ifelse(percChange>0,"+",ifelse(percChange<0,"-","")),  float(abs(percChange), 2), ") ")
+  }
+  
+  
   print(cli::boxx(
     c("Training Set Statistics",
       cli::rule(width = 30),
-      paste0("kappa: ", float(code.to.use$statistics$trainingSet$kappa), " (", ifelse(percChange>0,"+",ifelse(percChange<0,"-","")),  float(abs(percChange), 2), ") "),
+      paste0("kappa: ", float(newKappa), percChangeText),
       paste0("N: ", nrow(code.to.use$trainingSet)),
       paste0("Ignored: ", length(code.to.use$ignoredSet))
     )

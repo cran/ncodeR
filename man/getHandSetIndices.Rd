@@ -4,14 +4,17 @@
 \alias{getHandSetIndices}
 \title{Handset indices}
 \usage{
-getHandSetIndices(set, handSetLength = 20, handSetBaserate = 0.2)
+getHandSetIndices(codeToUse, handSetLength = 20, handSetBaserate = 0.2,
+  unseen = F)
 }
 \arguments{
-\item{set}{[TBD]}
+\item{codeToUse}{[TBD]}
 
 \item{handSetLength}{[TBD]}
 
 \item{handSetBaserate}{[TBD]}
+
+\item{unseen}{[TBD]}
 }
 \description{
 Handset indices

@@ -4,7 +4,7 @@
 #' @param definition Definition of the Code
 #' @param excerpts Character vectore of excerpts to use for Coding 
 #' @param type Character string representing the type of code (Default: "Regex")
-#' @param ... Adiditional parameters
+#' @param ... Additional parameters
 #'
 #' @examples
 #' data(RS.data)
@@ -16,7 +16,7 @@
 #'
 #' @return Code object
 #' @export
-create.code <- function(name = "NewCode", definition = "", excerpts = NULL, type = "Regex", ...) {
+create.code <- function(name = "NewCode", definition = NULL, excerpts = NULL, type = "Regex", ...) {
   newCode = get(paste0(type,"Code"))$new(name = name, definition = definition, excerpts = excerpts, ...)
   return(newCode)
 }
@@ -42,8 +42,8 @@ create.code <- function(name = "NewCode", definition = "", excerpts = NULL, type
 Code = R6::R6Class("Code",
   public = list(
     call = NULL,
-    name = "",
-    definition = "",
+    name = NULL,
+    definition = NULL,
     codeSet = NULL,
     excerpts = NULL,
         
@@ -51,8 +51,9 @@ Code = R6::R6Class("Code",
     trainingSet = data.frame(),
     computerSet = data.frame(),
     ignoredSet = data.frame(),
+    secondRaterSet = data.frame(),
     examples = NULL,
-    statistics = NULL,
+    statistics = list(testSet = list(), trainingSet = list(), secondRaterSet = list()),
     baserateInflation = NA,
     baserate = NA,
                      
@@ -65,6 +66,7 @@ Code = R6::R6Class("Code",
       testSet = NULL,
       trainingSet = NULL,
       computerSet = NULL,
+      secondRaterSet = NULL,
       ignoredSet = c(),
       examples = NULL,
       excerpts = NULL,
@@ -74,9 +76,9 @@ Code = R6::R6Class("Code",
       if(class(name) != "character"){
         stop("name must be a string");
       }
-      if(class(definition) != "character"){
-        stop("Conceptual definition must be a string");
-      }
+      # if(class(definition) != "character"){
+      #   stop("Conceptual definition must be a string");
+      # }
       if(!is.null(excerpts)) {
         self$excerpts = excerpts;
         # codeSet = CodeSet$new(title = "NewCodeSet", description = "New CodeSet for Codes", codes = c(self))
@@ -94,6 +96,7 @@ Code = R6::R6Class("Code",
       # Pre-defined parameters
       self$name = name;
       self$definition = definition;
+      class(self$statistics) = c("TestList", "list")
 
       if(is.null(testSet)) {
         self$testSet = matrix(ncol = 2, nrow = 0);
@@ -102,6 +105,10 @@ Code = R6::R6Class("Code",
       if(is.null(trainingSet)) {
         self$trainingSet = matrix(ncol = 2, nrow = 0);
         colnames(self$trainingSet) = c("ID", "X1");
+      }
+      if(is.null(secondRaterSet)) {
+        self$secondRaterSet = matrix(ncol = 2, nrow = 0);
+        colnames(self$secondRaterSet) = c("ID", "X1");
       }
       if(is.null(computerSet)) {
         self$computerSet = rep(NA, length(codeSet$excerpts));
@@ -127,6 +134,11 @@ Code = R6::R6Class("Code",
     differences = function(data = NULL, col1 = NULL, col2 = NULL, cols = NULL) {
       differences(self)
     },
+    clearTestSet = function() {
+      self$trainingSet = rbind(self$trainingSet, self$testSet)
+      self$testSet = self$testSet[-c(1:nrow(self$testSet)),]
+      private$testedTestSet = F
+    },
     
     concat = function(){
       return (paste(self$expressions, collapse="|"));
@@ -135,16 +147,23 @@ Code = R6::R6Class("Code",
       to.print = list();
       ss = get(class(self))
       fields = Filter(function(f) {
-        cls = class(newcode[[f]]);
-        !is(newcode[[f]], "function") && !is.null(newcode[[f]]) && cls != "environment"
+        cls = class(self[[f]]);
+        !is(self[[f]], "function") && !is.null(self[[f]]) && cls != "environment"
       }, c(names(ss$public_fields), names(ss$get_inherit()$public_fields)))
       for(field in fields) {
         to.print[[field]] = self[[field]]
       }
       print(to.print)
+    },
+    getValue = function(wh) {
+      private[[wh]]
+    },
+    setValue = function(wh, val) {
+      private[[wh]] = val
     }
   ),
   private = list(
-    "_id" = NULL
+    "_id" = NULL,
+    "testedTestSet" = F
   )
 )

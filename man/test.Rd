@@ -4,12 +4,17 @@
 \alias{test}
 \title{Calculate statistics}
 \usage{
-test(code, kappaThreshold = 0.65)
+test(code, kappaThreshold = 0.65, baserateInflation = 0.2,
+  type = c("training", "test"))
 }
 \arguments{
 \item{code}{Code object to test}
 
 \item{kappaThreshold}{Threshold used for calculating rhoR::rho}
+
+\item{baserateInflation}{inflation rate to use when sampling handsets}
+
+\item{type}{vector indicating which stats should be calculated}
 }
 \value{
 Code object with updated statistics property

@@ -4,8 +4,8 @@
 \alias{autocode}
 \title{Match a list of expressions against some set of excerpts}
 \usage{
-autocode(x = NULL, expressions = NULL, excerpts = NULL, simplify = T,
-  mode = "all")
+autocode(x = NULL, expressions = NULL, excerpts = NULL,
+  simplify = T, mode = "all")
 }
 \arguments{
 \item{x}{Object to autocode. Either a Code or CodeSet}

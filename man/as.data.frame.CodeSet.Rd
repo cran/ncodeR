@@ -4,7 +4,8 @@
 \alias{as.data.frame.CodeSet}
 \title{Title}
 \usage{
-\method{as.data.frame}{CodeSet}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{CodeSet}(x, row.names = NULL, optional = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{CodeSet to convert}

@@ -1,6 +1,16 @@
 \name{NEWS}
 \title{News for Package \pkg{ncodeR}}
 
+\section{Changes in nodeR version 0.1.3.0 (2019-04-09)}{
+  \itemize{
+    \item \code{handcode()} will now invalidate TestSet if it's already been tested
+    \item \code{test()} now keeps a running history of all tests on the \code{Code}
+    \item Bugfix: \code{summary()} will again properly show the most statistics results
+    \item Bugfix: \code{resolve()} properly shows training kappas
+    \item Bugfix: \code{handcode()} will now account for already coded excerpts when pulling more excerpts
+  }
+}
+
 \section{Changes in nodeR version 0.1.2 (2018-08-29)}{
   \itemize{
     \item \code{autocode()} now has a first parameter \code{x} that accepts either a \code{Code} or a \code{CodeSet} object

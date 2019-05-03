@@ -16,8 +16,6 @@ code.data = test(code = code.data, kappaThreshold = 0.65)
 # View the summary, with the calcuated statistics
 summary(code.data)
 
-
-
 # Create the People code
 code.people = create.code(name = "People", expressions = c("people","he", "she", "they"), excerpts = rs$text)
 
