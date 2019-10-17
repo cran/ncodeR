@@ -13,12 +13,14 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   code.to.use = NULL;
   if(!is.null(code)) {
     code.to.use = code$clone(deep = T);
-  } else {
+  }
+  else {
     code.to.use = create.code();
   }
   if(!is.null(excerpts)) {
     code.to.use$excerpts = excerpts;
-  } else {
+  }
+  else {
     excerpts = code.to.use$excerpts;
   }
   if(!is.null(expressions)) {
@@ -26,7 +28,8 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   }
   if(!is.null(ignored)) {
     code.to.use$ignoredSet = ignored;
-  } else if(is.null(code.to.use$ignoredSet)) {
+  }
+  else if(is.null(code.to.use$ignoredSet)) {
     ignored = c();
     code.to.use$ignoredSet = ignored;
   }
@@ -156,7 +159,8 @@ resolve <- function(code = NULL, trainingSet = NULL, computerSet = NULL, express
   
   if(!is.null(trainingSet)) {
     code.to.use$trainingSet = trainingSet;
-  } else {
+  }
+  else {
     if(nrow(code.to.use$testSet) && code.to.use$getValue("testedTestSet") == F) {
       justResolve = resolveFirst()
       if(justResolve != T) {

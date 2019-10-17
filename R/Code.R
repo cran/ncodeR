@@ -46,6 +46,9 @@ Code = R6::R6Class("Code",
     definition = NULL,
     codeSet = NULL,
     excerpts = NULL,
+    holdoutExcerpts = NULL,
+    touchableExcerpts = NULL,
+    touchedIndices = NULL,
         
     testSet = data.frame(), #matrix, columns: ID, R1training, R1test (with potential to add columns for other raters)
     trainingSet = data.frame(),
@@ -53,7 +56,7 @@ Code = R6::R6Class("Code",
     ignoredSet = data.frame(),
     secondRaterSet = data.frame(),
     examples = NULL,
-    statistics = list(testSet = list(), trainingSet = list(), secondRaterSet = list()),
+    statistics = list(),
     baserateInflation = NA,
     baserate = NA,
                      
@@ -70,24 +73,34 @@ Code = R6::R6Class("Code",
       ignoredSet = c(),
       examples = NULL,
       excerpts = NULL,
+      holdoutSize = 0.9,
       ...
     ){
       codeSet = NULL;
       if(class(name) != "character"){
         stop("name must be a string");
       }
-      # if(class(definition) != "character"){
-      #   stop("Conceptual definition must be a string");
-      # }
+      
       if(!is.null(excerpts)) {
         self$excerpts = excerpts;
-        # codeSet = CodeSet$new(title = "NewCodeSet", description = "New CodeSet for Codes", codes = c(self))
-      } else if(!is.null(codeSet)) {
+      } 
+      else if(!is.null(codeSet)) {
         # codeSet$codes = c(codeSet$codes, self)
         if(!is.null(codeSet$excerpts)) {
           self$excerpts = codeSet$excerpts
         } 
-      } 
+      }
+      # browser()
+      # self$touchableExcerpts = sample(seq(along=excerpts), size = ifelse(length(excerpts)>=holdoutSize, holdoutSize, length(excerpts)))
+      # self$holdoutExcerpts = seq_along(excerpts)[!(seq_along(excerpts) %in% self$touchableExcerpts)]
+      
+      holdoutN = ceiling(length(excerpts) * holdoutSize)
+      self$holdoutExcerpts = sample(
+        seq(along=excerpts),
+        size = holdoutN
+      )
+      self$touchableExcerpts = seq_along(excerpts)[!(seq_along(excerpts) %in% self$holdoutExcerpts)]
+      # length(excerpts) - length(self$holdoutExcerpts)
                       
       args = list(...);
       
@@ -111,7 +124,9 @@ Code = R6::R6Class("Code",
         colnames(self$secondRaterSet) = c("ID", "X1");
       }
       if(is.null(computerSet)) {
-        self$computerSet = rep(NA, length(codeSet$excerpts));
+        # self$computerSet = rep(NA, length(codeSet$excerpts));
+        self$computerSet = matrix(ncol = 2, nrow = 0);
+        colnames(self$computerSet) = c("ID", "X1");
       }
 
       self$ignoredSet = ignoredSet;

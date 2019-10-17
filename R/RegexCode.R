@@ -29,69 +29,89 @@ RegexCode = R6::R6Class("RegexCode",
                      
     ###
     # Main class constructor
-    ###
-    initialize = function(
-      name,
-      definition,
-      ...,
-      excerpts = NULL,
-      expressions = NULL
-    ){
-      super$initialize(name = name, definition = definition, excerpts = excerpts, ...)
-      
-      if((!is.null(expressions)) && (class(expressions) != "character")){
-        stop("expressions must be a vector of strings");
-      }
-                       
-      self$expressions = expressions;
-    },
+    ######
+      initialize = function(
+        name,
+        definition,
+        ...,
+        excerpts = NULL,
+        expressions = NULL
+      ){
+        super$initialize(name = name, definition = definition, excerpts = excerpts, ...)
+        
+        if((!is.null(expressions)) && (class(expressions) != "character")){
+          stop("expressions must be a vector of strings");
+        }
+                         
+        self$expressions = expressions;
+      },
+    #####
     
-    process = function(excerpts = self$excerpts) {
-      expression.match(excerpts, self$expressions, names = list(NULL, self$name))
-    },
+    ###
+    # Process function to override that on Code
+    #####
+      process = function(excerpts = self$excerpts) {
+        expression.match(excerpts, self$expressions, names = list(NULL, self$name))
+      },
+    #####
                      
     ###
     # Adds a new expression to the code's list
-    ###
-    add = function(
-      word
-    ){
-      if(class(word) != "character"){
-        stop("word must be a string");
-      }
-      self$expressions = c(self$expressions, word);
-      
-      ###DOES THIS AFFECT TRAINING/TEST SETS?
-    },
-                     
+    #####
+      add = function(
+        word
+      ){
+        if(class(word) != "character"){
+          stop("word must be a string");
+        }
+        self$expressions = c(self$expressions, word);
+        
+        ###DOES THIS AFFECT TRAINING/TEST SETS?
+      },
+    #####
+    
     ###
     # Removes an expression from the code's list
+    #####
+      remove = function(
+        word
+      ){
+        if(class(word) != "character"){
+          stop("word must be a string");
+        }
+        index = which(self$expressions == word)
+        if(length(index) == 0){
+          stop(paste("\"", word, "\" does not exist in the expressions list", sep = ""));
+        }else{
+          self$expressions = self$expressions[-index];
+        }
+        
+        ###DOES THIS AFFECT TRAINING/TEST SETS?
+      },
+    #####
+    
     ###
-    remove = function(
-      word
-    ){
-      if(class(word) != "character"){
-        stop("word must be a string");
+    # Concatenate expressions list as single regular expression
+    #####       
+      concat = function(){
+        return (paste(self$expressions, collapse="|"));
       }
-      index = which(self$expressions == word)
-      if(length(index) == 0){
-        stop(paste("\"", word, "\" does not exist in the expressions list", sep = ""));
-      }else{
-        self$expressions = self$expressions[-index];
-      }
-      
-      ###DOES THIS AFFECT TRAINING/TEST SETS?
-    },
-                     
-    concat = function(){
-      return (paste(self$expressions, collapse="|"));
-    }
+    #####
   ),
   
   private = list()
   
 )
 
+#' Expression Matching
+#'
+#' @description Match a set of text excerpts against a set of regular expressions
+#' @param excerpts Character vector to match against
+#' @param expressions Character vector of expressions
+#' @param names Character vector to use for dimension names
+#'
+#' @return Matrix representing matched expressions
+#' @export
 expression.match <- function(excerpts, expressions, names = list(NULL, "V1")) {
   matrix(
     unlist(lapply(excerpts, function(x) {

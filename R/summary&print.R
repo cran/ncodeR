@@ -76,28 +76,25 @@ print.summary.CodeSet = function(x, ...){
 #' rs = RS.data
 #' newcode = create.code(name = "Data", 
 #'     expressions = c("number","data"), excerpts = rs$text)
-#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
-#' newcode = test(code = newcode, kappaThreshold = 0.65)
+#' newcode <- handcode(newcode, this.set = 10:15, results = 0)
+#' newcode = test(code = newcode, kappa_threshold = 0.65)
 #' summary(newcode$statistics)
 #' @return list of Test summary
 #' @export
 summary.TestList = function(object, ...) {
   args = list(...)
   
+  stats <- object[[length(object)]]$one_v_classifier
   
-  which.tests = c("test","training")
-  if(!is.null(args$which.tests)) {
-    which.tests = args$which.tests
-  }
+  summary = list(
+    stats$test_set$kappa, stats$test_set$N, stats$test_set$rho,
+    stats$training_set$kappa, stats$training_set$N
+  ) 
   
-  summaries = sapply(which.tests, function(t) {
-    res = object[[paste0(t,"Set")]]
-    if(!is.null(res) && length(res) > 0) {
-      summary(res[[length(res)]], which.test = t)
-    }
-  })
-  summaries
+  class(summary) = "summary.TestList"
+  summary
 }
+
 #' Print a TestList summary
 #'
 #' @param x list from summary()
@@ -106,88 +103,35 @@ summary.TestList = function(object, ...) {
 #' @examples
 #' data(RS.data)
 #' rs = RS.data
-#' newcode = create.code( name = "Data", 
-#'     expressions = c("number","data"), excerpts = rs$text)
-#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
-#' newcode = test(code = newcode, kappaThreshold = 0.65)
+#' newcode <- create.code("Data", expressions = c("number","data"), excerpts = rs$text)
+#' newcode <- handcode(newcode, this.set = 10:15, results = 0)
+#' newcode = test(code = newcode, kappa_threshold = 0.65)
 #' summary(newcode$statistics)
+#' 
 #' @return prints summary
 #' @export
 print.summary.TestList = function(x, ...) {
-  browser()
-}
-
-#' Obtain a summary of a Code's test results
-#'
-#' @param object Test object of Code
-#' @param ... Additional parameters
-#'
-#' @examples
-#' data(RS.data)
-#' rs = RS.data
-#' newcode = create.code(name = "Data", 
-#'     expressions = c("number","data"), excerpts = rs$text)
-#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
-#' newcode = test(code = newcode, kappaThreshold = 0.65)
-#' summary(newcode$statistics)
-#' @return list of Test summary
-#' @export
-summary.Test = function(object, ...) {
-  # browser()
-  args = list(...)
-  
-  which.test = "test"
-  if(!is.null(args$which.test)) which.test = args$which.test;
-  
-  this.summary = c(
-    which = which.test,
-    kappa = object$kappa, 
-    N = object$N
-  )
-  
-  if(which.test == "test") {
-    this.summary = c(this.summary, rho = object$rho)
-  }
-  
-  class(this.summary) = "summary.Test"
-  this.summary
-}
-
-#' Print a Test summary
-#'
-#' @param x list from summary()
-#' @param ... Additional parameters
-#' 
-#' @examples
-#' data(RS.data)
-#' rs = RS.data
-#' newcode = create.code( name = "Data", 
-#'     expressions = c("number","data"), excerpts = rs$text)
-#' #newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
-#' newcode = test(code = newcode, kappaThreshold = 0.65)
-#' summary(newcode$statistics)
-#' @return prints summary
-#' @export
-print.summary.Test = function(x, ...) {
   args = list(...)
   width = 40;
+  
   if(!is.null(args$width)) width = args$width
   
-  header = NULL
-  vals = NULL
-  if(x[1] == "test") {
-    header = "kappa\t| rho\t| N"
-    vals = paste0(float(x[2]),"\t| ",float(x[4]),"\t| ",x[3])
-  }
-  else if(x[1] == "training" || x[1] == "secondRater") {
-    header = "kappa\t| N"
-    vals = paste0(float(x[2]),"\t| ",x[3])
-  }
+  test_vals = paste0(float(x[[1]]),"\t| ",float(x[[3]]),"\t| ",x[[2]])
+  
+  training_vals = paste0(float(x[[4]]),"\t| ",x[[5]])
+  
   writeLines(c(
+    "\nTest Set",
     paste0(rep("-",width), collapse=""),
-    header,
+    "kappa\t| rho\t| N",
     paste0(rep("-",width), collapse=""),
-    vals,
+    test_vals,
+    paste0(rep("-",width), collapse=""),
+    "\nTraining Set",
+    paste0(rep("-",width), collapse=""),
+    "kappa\t| N",
+    paste0(rep("-",width), collapse=""),
+    training_vals,
     paste0(rep("-",width), collapse=""),
     ""
   ))
@@ -208,9 +152,12 @@ print.summary.Test = function(x, ...) {
 #' @return List of Code summary
 #' @export
 summary.Code = function( object, ... ) {
-  statsSummary = summary(object$statistics)
+  statsSummary <- NULL
+  if(length(object$statistics)) {
+    statsSummary <- summary(object$statistics)
+  }
   
-  this.summary = list(
+  this.summary <- list(
     object$name,
     object$codeSet$title,
     object$definition, 
@@ -221,7 +168,7 @@ summary.Code = function( object, ... ) {
     object$baserateInflation
   )
   
-  class(this.summary) = "summary.Code"
+  class(this.summary) <- "summary.Code"
   this.summary
 }
 

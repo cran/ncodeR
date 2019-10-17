@@ -2,23 +2,22 @@
 % Please edit documentation in R/Test.R
 \name{test}
 \alias{test}
-\title{Calculate statistics}
+\title{Title}
 \usage{
-test(code, kappaThreshold = 0.65, baserateInflation = 0.2,
-  type = c("training", "test"))
+test(code, kappa_threshold = 0.65, baserate_inflation = 0.2, ...)
 }
 \arguments{
-\item{code}{Code object to test}
+\item{code}{[TBD]}
 
-\item{kappaThreshold}{Threshold used for calculating rhoR::rho}
+\item{kappa_threshold}{[TBD]}
 
-\item{baserateInflation}{inflation rate to use when sampling handsets}
+\item{baserate_inflation}{[TBD]}
 
-\item{type}{vector indicating which stats should be calculated}
+\item{...}{[TBD]}
 }
 \value{
-Code object with updated statistics property
+code object
 }
 \description{
-Run tests (kappa, rho) on the given Code
+Title
 }

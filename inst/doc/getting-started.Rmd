@@ -1,0 +1,40 @@
+---
+title: "Getting Started with nCoder"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with nCoder}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ncodeR)
+
+# Individual Pieces
+data(RS.data)
+rs_text = RS.data$text
+```
+
+## Create Code
+```{r}
+newcode = create.code(name = "Data", expressions = c("number","data"), excerpts = rs_text)
+```
+
+## Handcode 4 excerpts
+```{r}
+# newcode.h = handcode(code = newcode, excerpts = rs_text, n = 4)
+```
+
+## Run test to see rho/kappa of current test set
+```{r}
+# newcode.t = test(code = newcode.h, kappaThreshold = 0.65)
+```
+
+

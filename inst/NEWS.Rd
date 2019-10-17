@@ -1,6 +1,17 @@
 \name{NEWS}
 \title{News for Package \pkg{ncodeR}}
 
+\section{Changes in nodeR version 0.2.0.0 (2019-10-09)}{
+  \itemize{
+    \item Restructed statistical history on codes
+    \item \code{test()} defaults kappa_threshold to 0.9
+    \item Codes now contain a holdout set and a set of touchable excerpts.
+    \item Simplified retrieving of handsets for coding, along with randomizing the order
+    \item Bugfix: \code{handcode()} bug fixed that didn't show full excerpt when there was a newline.
+    \item Bugfix: Fixed bug when retreiving differences in code sets using \code{differences()}
+  }
+}
+
 \section{Changes in nodeR version 0.1.3.0 (2019-04-09)}{
   \itemize{
     \item \code{handcode()} will now invalidate TestSet if it's already been tested

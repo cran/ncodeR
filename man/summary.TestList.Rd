@@ -22,7 +22,7 @@ data(RS.data)
 rs = RS.data
 newcode = create.code(name = "Data", 
     expressions = c("number","data"), excerpts = rs$text)
-#newcode = handcode(code = newcode, excerpts = rs$text, n = 4)
-newcode = test(code = newcode, kappaThreshold = 0.65)
+newcode <- handcode(newcode, this.set = 10:15, results = 0)
+newcode = test(code = newcode, kappa_threshold = 0.65)
 summary(newcode$statistics)
 }

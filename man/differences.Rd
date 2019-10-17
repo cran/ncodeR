@@ -4,10 +4,14 @@
 \alias{differences}
 \title{Find Differences}
 \usage{
-differences(code = NULL)
+differences(code = NULL, wh = "trainingSet", to = "computerSet")
 }
 \arguments{
 \item{code}{Code object to search for differences}
+
+\item{wh}{Set to use as the base comparison}
+
+\item{to}{Set to compare wh to}
 }
 \value{
 logical vector representing indices that are coded differently

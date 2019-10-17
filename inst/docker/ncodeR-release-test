@@ -1,0 +1,12 @@
+#FROM rocker/r-ver:latest
+FROM registry.doit.wisc.edu/epistemic-analytics/qe-packages/ncoder/release:current
+
+RUN R -e 'install.packages(c("covr", "DT"), repos="http://cran.rstudio.com")'
+RUN R -e 'install.packages(c("aws.s3","aws.signature"), repos="http://cran.rstudio.com")'
+RUN pwd
+RUN R -e 'install.packages(c("fs"), repos="http://cran.rstudio.com")'
+RUN pwd
+RUN R -e 'install.packages(c("pkgdown"), repos="http://cran.rstudio.com")'
+RUN R -e 'install.packages(c("aws.s3","aws.signature"), repos="http://cran.rstudio.com")'
+
+RUN R --version
