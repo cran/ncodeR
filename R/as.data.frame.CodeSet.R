@@ -29,11 +29,12 @@ as.data.frame.CodeSet <- function(x, row.names = NULL, optional = FALSE, ...) {
   if(is.null(len) && !is.null(args$len)) len = args$len;
   if(is.null(args$codes)) codes = x$codes;
   if(!is.null(len) && len > 0) {
-    data.frame(ID = 1:len, excerpt = excerpts[1:len], sapply(codes, function(x){ 
+    coded_cols <- sapply(codes, function(x){ 
       df = data.frame( x$computerSet[1:len] ) 
-      colnames(df) = c( x[['name']] )
       df
-    }))
+    })
+    names(coded_cols) <- as.character(lapply(codes, `[[`, "name"))
+    data.frame(ID = 1:len, excerpt = excerpts[1:len], coded_cols)
   } else {
     data.frame()
   }

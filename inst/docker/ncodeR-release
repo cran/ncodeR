@@ -1,6 +1,5 @@
 FROM rocker/r-ver:latest
 
-
 RUN apt-get update -y
 RUN apt-get install -y apt-utils
 RUN apt-get install -y libxml2 xml2

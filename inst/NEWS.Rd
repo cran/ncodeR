@@ -1,6 +1,13 @@
 \name{NEWS}
 \title{News for Package \pkg{ncodeR}}
 
+\section{Changes in nodeR version 0.2.0.1 (2019-11-19)}{
+  \itemize{
+    \item Bugfix: Missing precision and recall calculation with rho/Kappa
+    \item Bugfix: Fixed output from \code{autocode()}
+  }
+}
+
 \section{Changes in nodeR version 0.2.0.0 (2019-10-09)}{
   \itemize{
     \item Restructed statistical history on codes

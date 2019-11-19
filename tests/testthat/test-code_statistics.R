@@ -90,3 +90,33 @@ testthat::test_that("Verify clearing of test set", {
   
   expect_equal(newcode_w_training$trainingSet, newcode$testSet)
 })
+testthat::test_that("Calculate precision and recall", {
+  name <- "Data"
+  set <- 10:15
+  exprs <- c("number","priority")
+  coded <- sapply(rs_text[set], grepl, pattern = paste0(exprs, collapse = "|")) * 1
+  
+  newcode <- create.code(name, expressions = exprs, excerpts = rs_text) %>% 
+              handcode(this.set = set, results = 0) %>% 
+              test()
+  testthat::expect_equal(newcode$statistics[[1]]$one_v_classifier$test_set$recall, 0)
+  testthat::expect_true(is.nan(newcode$statistics[[1]]$one_v_classifier$test_set$precision))
+  
+  newcode2 <- create.code(name, expressions = exprs, excerpts = rs_text) %>% 
+                handcode(this.set = set, results = c(rep(0, 5), 1)) %>% 
+                test()
+  testthat::expect_equal(newcode2$statistics[[1]]$one_v_classifier$test_set$recall, 1)
+  testthat::expect_equal(newcode2$statistics[[1]]$one_v_classifier$test_set$precision, 1)
+  
+  newcode3 <- create.code(name, expressions = exprs, excerpts = rs_text) %>% 
+                handcode(this.set = 10:30, results = c(rep(0, 5),1, rep(0,10),1,1,1,0,0) ) %>% 
+                test()
+  testthat::expect_equal(newcode3$statistics[[1]]$one_v_classifier$test_set$recall, 1)
+  testthat::expect_equal(newcode3$statistics[[1]]$one_v_classifier$test_set$precision, 0.75)
+  
+  newcode4 <- create.code(name, expressions = exprs, excerpts = rs_text) %>% 
+                handcode(this.set = 10:30, results = c(rep(0, 5),1, rep(0,10),1,0,0,0,0) ) %>% 
+                test()
+  testthat::expect_equal(round(newcode4$statistics[[1]]$one_v_classifier$test_set$recall, 2), 0.67)
+  testthat::expect_equal(newcode4$statistics[[1]]$one_v_classifier$test_set$precision, 1)
+})
